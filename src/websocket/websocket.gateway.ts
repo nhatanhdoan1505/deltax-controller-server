@@ -40,9 +40,31 @@ export class WebsocketGateway
   @WebSocketServer()
   server: Server;
 
+  @SubscribeMessage('ping')
+  ping(): void {
+    console.log('ping');
+  }
+
   @SubscribeMessage(WebsocketEvent.PRESS)
   handleMessage(@MessageBody('data') data: string): void {
     this.tcp.emitApplication(data);
+  }
+
+  @SubscribeMessage(WebsocketEvent.MOVE)
+  handleMove(@MessageBody() data: string): void {
+    console.log('asdaas');
+    this.server.emit(WebsocketEvent.MOVE, data);
+  }
+
+  @SubscribeMessage(WebsocketEvent.LIVE_CAMERA)
+  getLiveCamera(@MessageBody() data: Buffer): void {
+    console.log(data);
+    this.server.emit(WebsocketEvent.LIVE_CAMERA, data);
+  }
+
+  @SubscribeMessage('error')
+  handle(err: Socket): void {
+    console.log('Err');
   }
 
   emitImage(image: string): void {
